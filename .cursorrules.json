@@ -1,0 +1,88 @@
+{
+  "projectContext": [
+    "This is a Node.js server for a multiplayer quiz game.",
+    "It uses Express.js for REST API endpoints and basic server structure.",
+    "Socket.IO is used for real-time communication between clients and the server for game events.",
+    "Firebase (Firestore) is used as the database for storing room, player, and game data.",
+    "Firebase Admin SDK is used for server-side Firebase operations.",
+    "The project follows a modular structure with services, models, and socket handlers separated into different directories."
+  ],
+  "directoryStructure": {
+    "src/config": "Contains configuration files, including Firebase Admin SDK initialization and environment variables.",
+    "src/models": "Handles database interactions (Firestore). Contains models for rooms, players, questions, and the database configuration (dbConfig.js).",
+    "src/services": "Contains the business logic for game operations (gameService.js) and room management (roomService.js).",
+    "src/socket": "Manages Socket.IO event handlers, separated into gameHandlers.js and roomHandlers.js, and an index.js for initialization.",
+    "src/utils": "Contains utility functions, like room code generation.",
+    "src/app.js": "The main Express application setup file (middleware, basic routes, error handling, Socket.IO setup).",
+    "src/server.js": "The entry point of the server, responsible for starting the HTTP server."
+  },
+  "codingConventions": [
+    "Follow JavaScript ES6+ syntax and features.",
+    "Use JSDoc for documenting functions, especially public APIs and complex logic.",
+    "Prefer async/await for asynchronous operations.",
+    "Ensure error handling is robust, especially for database operations and external API calls.",
+    "Constants should be in UPPER_SNAKE_CASE.",
+    "Aim for clear and descriptive variable and function names.",
+    "Modularize code into smaller, reusable functions and modules."
+  ],
+  "importantFiles": [
+    "src/app.js",
+    "src/server.js",
+    "src/config/firebaseAdmin.js",
+    "src/config/index.js",
+    "src/services/gameService.js",
+    "src/services/roomService.js",
+    "src/socket/index.js",
+    "src/socket/gameHandlers.js",
+    "src/socket/roomHandlers.js",
+    "src/models/dbConfig.js",
+    "src/models/roomModel.js",
+    "src/models/playerModel.js",
+    "src/models/questionModel.js",
+    "package.json"
+  ],
+  "commands": {
+    "startDev": "npm run dev (or your specific command to start the development server, typically using nodemon)",
+    "startProd": "npm start (or your specific command to start the production server)",
+    "lint": "npm run lint (if you have a linting script)"
+  },
+  "rules": [
+    {
+      "when": "creating new service functions",
+      "then": "ensure they are imported and potentially initialized or used in the appropriate socket handlers or higher-level service logic."
+    },
+    {
+      "when": "creating new model functions",
+      "then": "ensure they handle database interactions and are called from service layer functions. Update JSDoc for these functions."
+    },
+    {
+      "when": "adding new socket event handlers",
+      "then": "register them in the relevant handler file (gameHandlers.js or roomHandlers.js) and ensure they call appropriate service functions. Document the event name, payload, and any callbacks."
+    },
+    {
+      "when": "modifying game logic in gameService.js",
+      "then": "pay close attention to game state management, player turn order, timers, and socket emissions to all clients in the room. Ensure Firestore updates are atomic where necessary."
+    },
+    {
+      "when": "modifying room logic in roomService.js",
+      "then": "consider player roles (player vs spectator), room capacity, host management, and transitions between room states (waiting, active, ended)."
+    },
+    {
+      "when": "dealing with Firebase Firestore",
+      "then": "use the existing model functions in src/models/*.js. Remember that deleting a document does not delete its subcollections by default."
+    },
+    {
+      "when": "editing environment-dependent configurations",
+      "then": "refer to src/config/index.js and .env file conventions. Do not hardcode sensitive credentials."
+    }
+  ],
+  "glossary": {
+    "uid": "User ID, typically from Firebase Authentication.",
+    "roomId": "Unique identifier for a game room.",
+    "roomCode": "Human-friendly code for joining a room.",
+    "gameSettings": "Object containing settings for a game instance (e.g., questionsPerPlayer, turnTimeoutSec).",
+    "activeTurnOrderUids": "Array of UIDs representing the order of players for turns in an active game.",
+    "currentPlayerIndexInOrder": "The index in activeTurnOrderUids for the current player's turn.",
+    "currentQuestionDbIndex": "The index (stored as string ID) of the current question in the room's questions subcollection."
+  }
+} 

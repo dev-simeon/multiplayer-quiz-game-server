@@ -1,0 +1,35 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // User profiles
+    match /users/{userId} {
+      allow read, update, delete: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Rooms
+    match /rooms/{roomId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update, delete: if false; // Only allow updates via server/admin
+
+      // Players subcollection
+      match /players/{playerId} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null && request.auth.uid == playerId;
+        allow update, delete: if request.auth != null && request.auth.uid == playerId;
+      }
+
+      // Questions subcollection (read-only for clients)
+      match /questions/{questionId} {
+        allow read: if request.auth != null;
+        allow write: if false; // Only server can write questions
+      }
+    }
+  }
+}
